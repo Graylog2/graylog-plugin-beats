@@ -1,6 +1,6 @@
 # Elastic Beats Input Plugin for Graylog
 
-[![Build Status](https://travis-ci.org/Graylog2/graylog-plugin-beats.svg?branch=master)](https://travis-ci.org/Graylog2/graylog-plugin-beats)
+[![Build Status](https://travis-ci.org/Graylog2/graylog-plugin-beats.svg?branch=1.0)](https://travis-ci.org/Graylog2/graylog-plugin-beats)
 
 **Required Graylog version:** 2.0.0 and later
 
