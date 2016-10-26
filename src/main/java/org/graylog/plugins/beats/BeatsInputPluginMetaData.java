@@ -47,7 +47,7 @@ public class BeatsInputPluginMetaData implements PluginMetaData {
 
     @Override
     public Version getVersion() {
-        return new Version(1, 1, 3);
+        return new Version(1, 1, 4);
     }
 
     @Override
