@@ -27,9 +27,9 @@ $Shortcut.Arguments = "/K cd /d C:\\graylog"
 $Shortcut.Save()
 
 echo "Disable automatic updates"
-$AUSettigns = (New-Object -com "Microsoft.Update.AutoUpdate").Settings
-$AUSettigns.NotificationLevel = 1
-$AUSettigns.Save()
+$AUSettings = (New-Object -com "Microsoft.Update.AutoUpdate").Settings
+$AUSettings.NotificationLevel = 1
+$AUSettings.Save()
 SCRIPT
 
 Vagrant.configure(2) do |config|
