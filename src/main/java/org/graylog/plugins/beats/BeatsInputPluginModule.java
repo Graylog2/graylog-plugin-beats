@@ -16,13 +16,17 @@
  */
 package org.graylog.plugins.beats;
 
+import org.graylog.plugins.beats.input.BeatKafkaInput;
+import org.graylog.plugins.beats.input.KafkaTransport;
 import org.graylog2.plugin.PluginModule;
 
 public class BeatsInputPluginModule extends PluginModule {
     @Override
     protected void configure() {
+        addTransport("Kafka beat input", KafkaTransport.class);
         addTransport("beats", BeatsTransport.class);
         addCodec("beats", BeatsCodec.class);
         addMessageInput(BeatsInput.class);
+        addMessageInput(BeatKafkaInput.class);
     }
 }
