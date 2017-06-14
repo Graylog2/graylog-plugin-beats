@@ -74,6 +74,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.site.skip>true</maven.site.skip>
         <graylog.version>2.3.0-alpha.4-SNAPSHOT</graylog.version>
+	<kafka.version>0.9.0.1</kafka.version>
     </properties>
 
     <dependencies>
@@ -87,6 +88,12 @@
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service</artifactId>
             <version>${auto-service.version}</version>
+            <scope>provided</scope>
+        </dependency>
+ 	<dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
