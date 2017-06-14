@@ -14,9 +14,6 @@ import org.graylog2.plugin.inputs.annotations.FactoryClass;
 
 import javax.inject.Inject;
 
-/**
- * Created by fbalicchia on 10/06/17.
- */
 public class BeatKafkaInput extends MessageInput {
     private static final String NAME = "Beat Kafka plugin";
 

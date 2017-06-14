@@ -4,7 +4,6 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.InstrumentedExecutorService;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricSet;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -21,7 +20,9 @@ import org.graylog2.plugin.LocalMetricRegistry;
 import org.graylog2.plugin.ServerStatus;
 import org.graylog2.plugin.configuration.Configuration;
 import org.graylog2.plugin.configuration.ConfigurationRequest;
-import org.graylog2.plugin.configuration.fields.*;
+import org.graylog2.plugin.configuration.fields.ConfigurationField;
+import org.graylog2.plugin.configuration.fields.NumberField;
+import org.graylog2.plugin.configuration.fields.TextField;
 import org.graylog2.plugin.inputs.MessageInput;
 import org.graylog2.plugin.inputs.MisfireException;
 import org.graylog2.plugin.inputs.annotations.ConfigClass;
@@ -37,7 +38,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -52,20 +56,6 @@ public class KafkaTransport extends ThrottleableTransport {
     public static final String CK_POOL_TIMEOUT = "pool_timeout";
     public static final String CK_TOPIC_FILTER = "topic_filter";
     public static final String CK_THREADS = "threads";
-
-    private static final String CK_TLS_CLIENT_AUTH_TRUSTED_CERT_FILE = "tls_client_auth_cert_file";
-    private static final String CK_TLS_CERT_FILE = "tls_cert_file";
-    private static final String CK_TLS_KEY_FILE = "tls_key_file";
-    private static final String CK_TLS_ENABLE = "tls_enable";
-    private static final String CK_TLS_KEY_PASSWORD = "tls_key_password";
-    private static final String CK_TLS_CLIENT_AUTH = "tls_client_auth";
-    private static final String TLS_CLIENT_AUTH_DISABLED = "disabled";
-    private static final String TLS_CLIENT_AUTH_OPTIONAL = "optional";
-    private static final String TLS_CLIENT_AUTH_REQUIRED = "required";
-    private static final Map<String, String> TLS_CLIENT_AUTH_OPTIONS = ImmutableMap.of(
-            TLS_CLIENT_AUTH_DISABLED, TLS_CLIENT_AUTH_DISABLED,
-            TLS_CLIENT_AUTH_OPTIONAL, TLS_CLIENT_AUTH_OPTIONAL,
-            TLS_CLIENT_AUTH_REQUIRED, TLS_CLIENT_AUTH_REQUIRED);
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaTransport.class);
 
@@ -272,60 +262,6 @@ public class KafkaTransport extends ThrottleableTransport {
                     "Number of processor threads to spawn. Use one thread per Kafka topic partition. if has more node use number_of_thread = number_topic / number_of_node",
                     ConfigurationField.Optional.NOT_OPTIONAL));
 
-            cr.addField(
-                    new TextField(
-                            CK_TLS_CERT_FILE,
-                            "TLS cert file",
-                            "",
-                            "Path to the TLS certificate file",
-                            ConfigurationField.Optional.OPTIONAL
-                    )
-            );
-            cr.addField(
-                    new TextField(
-                            CK_TLS_KEY_FILE,
-                            "TLS private key file",
-                            "",
-                            "Path to the TLS private key file",
-                            ConfigurationField.Optional.OPTIONAL
-                    )
-            );
-            cr.addField(
-                    new BooleanField(
-                            CK_TLS_ENABLE,
-                            "Enable TLS",
-                            false,
-                            "Accept TLS connections"
-                    )
-            );
-            cr.addField(
-                    new TextField(
-                            CK_TLS_KEY_PASSWORD,
-                            "TLS key password",
-                            "",
-                            "The password for the encrypted key file.",
-                            ConfigurationField.Optional.OPTIONAL,
-                            TextField.Attribute.IS_PASSWORD
-                    )
-            );
-            cr.addField(
-                    new DropdownField(
-                            CK_TLS_CLIENT_AUTH,
-                            "TLS client authentication",
-                            TLS_CLIENT_AUTH_DISABLED,
-                            TLS_CLIENT_AUTH_OPTIONS,
-                            "Whether clients need to authenticate themselves in a TLS connection",
-                            ConfigurationField.Optional.OPTIONAL
-                    )
-            );
-            cr.addField(
-                    new TextField(
-                            CK_TLS_CLIENT_AUTH_TRUSTED_CERT_FILE,
-                            "TLS Client Auth Trusted Certs",
-                            "",
-                            "TLS Client Auth Trusted Certs  (File or Directory)",
-                            ConfigurationField.Optional.OPTIONAL)
-            );
             return cr;
         }
     }
