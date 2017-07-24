@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import org.graylog.plugins.beats.BeatsCodec;
-import org.graylog2.inputs.codecs.GelfCodec;
 import org.graylog2.plugin.LocalMetricRegistry;
 import org.graylog2.plugin.ServerStatus;
 import org.graylog2.plugin.configuration.Configuration;
@@ -72,7 +71,7 @@ public class BeatKafkaInput extends MessageInput {
     @ConfigClass
     public static class Config extends MessageInput.Config {
         @Inject
-        public Config(KafkaTransport.Factory transport, GelfCodec.Factory codec) {
+        public Config(KafkaTransport.Factory transport, BeatsCodec.Factory codec) {
             super(transport.getConfig(), codec.getConfig());
         }
     }
