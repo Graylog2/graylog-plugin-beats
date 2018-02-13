@@ -27,12 +27,12 @@ import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,19 +41,38 @@ public class BeatsCodecTest {
     @Rule
     public final MockitoRule mockitoRule = MockitoJUnit.rule();
 
-    @Mock
+    private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
     private Configuration configuration;
     private BeatsCodec codec;
 
     @Before
     public void setUp() throws Exception {
-        final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+        configuration = new Configuration(Collections.singletonMap("beats_prefix", true));
         codec = new BeatsCodec(configuration, objectMapper);
     }
 
     @Test
     public void decodeReturnsNullIfPayloadCouldNotBeDecoded() throws Exception {
         assertThat(codec.decode(new RawMessage(new byte[0]))).isNull();
+    }
+
+    @Test
+    public void decodeMessagesHandlesFilebeatMessagesWithoutPrefix() throws Exception {
+        configuration = new Configuration(Collections.singletonMap("beats_prefix", false));
+        codec = new BeatsCodec(configuration, objectMapper);
+
+        final Message message = codec.decode(messageFromJson("filebeat.json"));
+        assertThat(message).isNotNull();
+        assertThat(message.getMessage()).isEqualTo("TEST");
+        assertThat(message.getTimestamp()).isEqualTo(new DateTime(2016, 4, 1, 0, 0, DateTimeZone.UTC));
+        assertThat(message.getField("facility")).isEqualTo("beats");
+        assertThat(message.getField("beats_type")).isEqualTo("filebeat");
+        assertThat(message.getField("source")).isEqualTo("/tmp/test.log");
+        assertThat(message.getField("input_type")).isEqualTo("log");
+        assertThat(message.getField("count")).isEqualTo(1);
+        assertThat(message.getField("offset")).isEqualTo(0);
+        @SuppressWarnings("unchecked") final List<String> tags = (List<String>) message.getField("tags");
+        assertThat(tags).containsOnly("foobar", "test");
     }
 
     @Test

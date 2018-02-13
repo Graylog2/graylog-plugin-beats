@@ -22,6 +22,8 @@ import com.google.inject.assistedinject.Assisted;
 import org.graylog2.plugin.Message;
 import org.graylog2.plugin.Tools;
 import org.graylog2.plugin.configuration.Configuration;
+import org.graylog2.plugin.configuration.ConfigurationRequest;
+import org.graylog2.plugin.configuration.fields.BooleanField;
 import org.graylog2.plugin.inputs.annotations.Codec;
 import org.graylog2.plugin.inputs.annotations.ConfigClass;
 import org.graylog2.plugin.inputs.annotations.FactoryClass;
@@ -47,12 +49,16 @@ public class BeatsCodec extends AbstractCodec {
     private static final Logger LOG = LoggerFactory.getLogger(BeatsCodec.class);
     private static final String MAP_KEY_SEPARATOR = "_";
     private static final String BEATS_UNKNOWN = "unknown";
+    private static final String CK_BEATS_PREFIX = "beats_prefix";
 
     private final ObjectMapper objectMapper;
+    private final boolean useBeatPrefix;
 
     @Inject
     public BeatsCodec(@Assisted Configuration configuration, ObjectMapper objectMapper) {
         super(configuration);
+
+        this.useBeatPrefix = configuration.getBoolean(CK_BEATS_PREFIX, false);
         this.objectMapper = requireNonNull(objectMapper);
     }
 
@@ -73,6 +79,7 @@ public class BeatsCodec extends AbstractCodec {
 
     private Message parseEvent(JsonNode event) {
         final String beatsType = event.path("@metadata").path("beat").asText("beat");
+        final String rootPath = useBeatPrefix ? beatsType : "";
         final String message = event.path("message").asText("-");
         final String timestampField = event.path("@timestamp").asText();
         final DateTime timestamp = Tools.dateTimeFromString(timestampField);
@@ -83,7 +90,8 @@ public class BeatsCodec extends AbstractCodec {
         final Message gelfMessage = new Message(message, hostname, timestamp);
         gelfMessage.addField("beats_type", beatsType);
         gelfMessage.addField("facility", "beats");
-        addFlattened(gelfMessage, beatsType, event);
+
+        addFlattened(gelfMessage, rootPath, event);
         return gelfMessage;
     }
 
@@ -138,8 +146,20 @@ public class BeatsCodec extends AbstractCodec {
 
     @ConfigClass
     public static class Config extends AbstractCodec.Config {
-    }
+        @Override
+        public ConfigurationRequest getRequestedConfiguration() {
+            final ConfigurationRequest configurationRequest = super.getRequestedConfiguration();
 
+            configurationRequest.addField(new BooleanField(
+                    CK_BEATS_PREFIX,
+                    "Add Beats type as prefix",
+                    false,
+                    "Use the Beats type as prefix for each field, e. g. \"filebeat_source\"."
+            ));
+
+            return configurationRequest;
+        }
+    }
 
     public static class Descriptor extends AbstractCodec.Descriptor {
         @Inject
