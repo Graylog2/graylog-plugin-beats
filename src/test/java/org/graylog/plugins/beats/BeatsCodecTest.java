@@ -101,6 +101,10 @@ public class BeatsCodecTest {
         assertThat(message.getField("facility")).isEqualTo("beats");
         assertThat(message.getField("beats_type")).isEqualTo("packetbeat");
         assertThat(message.getField("packetbeat_type")).isEqualTo("dns");
+        assertThat(message.getField("packetbeat_status")).isEqualTo("OK");
+        assertThat(message.getField("packetbeat_method")).isEqualTo("QUERY");
+        assertThat(message.getField("packetbeat_dns_answers_0_type")).isEqualTo("A");
+        assertThat(message.getField("packetbeat_dns_flags_recursion_allowed")).isEqualTo(true);
     }
 
     @Test

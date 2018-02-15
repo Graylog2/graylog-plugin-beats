@@ -106,7 +106,13 @@ public class BeatsCodec extends AbstractCodec {
         } else if (jsonNode.isArray()) {
             final List<Object> values = new ArrayList<>(jsonNode.size());
             for (int i = 0; i < jsonNode.size(); i++) {
-                values.add(valueNode(jsonNode.get(i)));
+                final JsonNode currentNode = jsonNode.get(i);
+                if (currentNode.isObject()) {
+                    final String pathPrefix = currentPath.isEmpty() ? "" : currentPath + MAP_KEY_SEPARATOR + i;
+                    addFlattened(message, pathPrefix, currentNode);
+                } else if (currentNode.isValueNode()) {
+                    values.add(valueNode(currentNode));
+                }
             }
             message.addField(currentPath, values);
         } else if (jsonNode.isValueNode()) {
