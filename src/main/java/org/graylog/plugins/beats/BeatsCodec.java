@@ -124,6 +124,8 @@ public class BeatsCodec extends AbstractCodec {
             return jsonNode.asLong();
         } else if (jsonNode.isFloatingPointNumber()) {
             return jsonNode.asDouble();
+        } else if (jsonNode.isBoolean()) {
+            return jsonNode.asBoolean();
         } else if (jsonNode.isNull()) {
             return null;
         } else {
