@@ -1,3 +1,11 @@
+# DEPRECATION NOTICE
+
+This project has been merged into [graylog2-server](https://github.com/Graylog2/graylog2-server), see [#28](https://github.com/Graylog2/graylog-plugin-beats/issues/28)
+
+Please use the [issue tracker in the graylog2-server repository](https://github.com/Graylog2/graylog2-server/issues) for any feature requests or bug reports.
+
+----
+
 # Elastic Beats Input Plugin for Graylog
 
 [![Build Status](https://travis-ci.org/Graylog2/graylog-plugin-beats.svg?branch=master)](https://travis-ci.org/Graylog2/graylog-plugin-beats)
